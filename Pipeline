@@ -1,0 +1,29 @@
+
+# Author 'Amaru'
+
+library(ggplot2)
+
+# Load the file
+Normalization_protocol <-read.csv("/Users/alanmejiamaza/Desktop/Normalization.csv",
+                       header = TRUE, 
+                       comment.char="#"
+)  
+
+# Shapiro-Wilk test
+ggqqplot("batch_number"$MFI_presynaptic)
+shapiro.test("batch_number"$MFI_presynaptic)
+
+#ecdf analysis for longitudinal analysis
+#Use this test if MFI batches are statistically different
+
+# if two or more batches
+ggplot(Normalization_protocol, aes(x = MFI_presynaptic, group = factor(timepoint), color = factor(timepoint))) +
+  stat_ecdf(size = 2.5) + theme_classic() + ylab("Cumulative frequency") + 
+  xlab("Pre-synaptic mean fluorescence") # + theme(legend.position="none")
+
+# pairwise_ks_test, p value >= 0.05, means normal distribution
+value<-Normalization_protocol$MFI_presynaptic
+group<-Normalization_protocol$timepoint
+pairwise_ks_test(value,group,warning = -1)
+pairwise_ks_test(value, group, n_min = 50, warning = 0,
+                 alternative = "two.sided")
